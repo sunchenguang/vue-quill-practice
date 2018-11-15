@@ -12,6 +12,28 @@
       @change="onEditorChange"
     >
     </quill-editor>
+    <el-dialog
+      title="添加链接"
+      :visible.sync="showLinkDialog"
+      width="30%"
+    >
+      <el-form
+        ref="linkForm"
+        :model="linkForm"
+        :rules="linkRules"
+      >
+        <el-form-item label="链接名称" prop="text">
+          <el-input v-model="linkForm.text"></el-input>
+        </el-form-item>
+        <el-form-item label="链接地址" prop="url">
+          <el-input v-model="linkForm.url"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showLinkDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleConfirmLink">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -56,6 +78,20 @@ export default {
   },
   data () {
     return {
+      activeIndex: 0,
+      showLinkDialog: false,
+      linkForm: {
+        text: '',
+        url: ''
+      },
+      linkRules: {
+        text: [
+          { required: true, message: '请输入链接名称', trigger: 'blur' }
+        ],
+        url: [
+          { required: true, message: '请输入链接地址', trigger: 'blur' }
+        ]
+      },
       $viewer: null,
       loading: false,
       uploadToken: '',
@@ -184,11 +220,28 @@ export default {
       editor.formatText(range.index, 1, 'alt', name)
       this.loading = false
     },
-    showLinkDialog () {
-      let text = '你好'; let link = 'http://www.baidu.com'
-      let editor = this.editor
-      const range = editor.getSelection()
-      editor.insertText(range.index, text, 'link', link)
+    handleLink () {
+      this.activeIndex = (this.editor.getSelection() || {}).index || this.editor.getLength()
+      this.showLinkDialog = true
+    },
+    handleConfirmLink () {
+      this.$refs.linkForm.validate((valid) => {
+        if (!valid) {
+          this.$message({
+            message: '表单有错误！',
+            type: 'warning'
+          })
+          return
+        }
+
+        let editor = this.editor
+        editor.insertText(this.activeIndex, this.linkForm.text, 'link', this.linkForm.url)
+        editor.setSelection(this.activeIndex + this.linkForm.text.length, 0)
+
+        this.$refs.linkForm.resetFields()
+
+        this.showLinkDialog = false
+      })
     }
   },
   computed: {
@@ -206,7 +259,7 @@ export default {
     })
 
     this.editor.getModule('toolbar').addHandler('link', () => {
-      !this.disabled && this.showLinkDialog()
+      !this.disabled && this.handleLink()
     })
 
     this.$el.querySelector('.ql-editor').addEventListener('click', (e) => {
