@@ -221,7 +221,9 @@ export default {
       this.loading = false
     },
     handleLink () {
-      this.activeIndex = (this.editor.getSelection() || {}).index || this.editor.getLength()
+      let selection = this.editor.getSelection()
+      this.activeIndex = selection ? selection.index : this.editor.getLength()
+
       this.showLinkDialog = true
     },
     handleConfirmLink () {
