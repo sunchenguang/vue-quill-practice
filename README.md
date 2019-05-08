@@ -1,29 +1,21 @@
-# demo-a
+# 简易版使用vue-quill-editor的业务场景
 
-## Project setup
+## 常用命令
 ```
 yarn install
-```
 
-### Compiles and hot-reloads for development
-```
 yarn run serve
 ```
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+## RichTextEditor
+`src/components/RichTextEditor/index.vue`
 
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 主要功能
+- magicUrl （url文本被自动转为url链接，可点击）
+- imageDrop （图片拖放，复制粘贴上传，）
+- imageResize （图片缩放，水平位置调整）
+- mention （可以 @人员）
+- 预览模式点击图片自动弹层放大显示
+- 自定义link按钮行为，点击弹窗填写链接名称和url, 确定后插入编辑器
+- 自定义image按钮行为，点击选择图片并上传
+- 自定义Quote Blot(引用块)
